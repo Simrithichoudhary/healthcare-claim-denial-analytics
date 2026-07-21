@@ -1,0 +1,13 @@
+{
+  "claims": 10000,
+  "denial_rate": 0.1254,
+  "total_billed": 21667088.839999996,
+  "revenue_leakage": 6611711.109999999,
+  "top_denial_reasons": {
+    "Prior Authorization Missing": 386,
+    "Medical Necessity / Other": 344,
+    "Eligibility Issue": 166,
+    "Documentation Incomplete": 124,
+    "Coding Error": 103
+  }
+}

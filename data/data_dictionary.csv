@@ -1,0 +1,25 @@
+field,description,type,role
+claim_id,Unique synthetic claim identifier,Text,Generated
+patient_id,Synthetic patient identifier,Text,Generated
+provider_id,Synthetic provider identifier,Text,Generated
+submission_date,Date the claim was submitted,Date,Generated
+payer_name,Insurance payer,Category,Input feature
+plan_type,Insurance plan category,Category,Input feature
+provider_specialty,Provider's specialty,Category,Input feature
+cpt_code,Procedure code,Category,Input feature
+icd10_code,Diagnosis code,Category,Input feature
+claim_amount,Amount billed on the claim,Currency,Input feature
+prior_auth_required,Whether the service normally requires prior authorization,0/1,Input feature
+prior_auth_on_file,Whether required authorization is available,0/1,Input feature
+documentation_complete,Whether required documentation is complete,0/1,Input feature
+eligibility_verified,Whether patient eligibility was verified,0/1,Input feature
+provider_credentialed,Whether provider credentialing is active,0/1,Input feature
+coding_valid,Whether coding validation passed,0/1,Input feature
+duplicate_indicator,Potential duplicate claim indicator,0/1,Input feature
+days_to_submit,Days between service completion and claim submission,Integer,Input feature
+claim_status,Approved or Denied,Category,Outcome
+was_denied,Binary denial target,0/1,Model target
+denial_reason,Assigned reason for denied claims,Category,Outcome
+amount_paid,Synthetic payer reimbursement,Currency,Outcome
+revenue_leakage,Billed amount minus amount paid,Currency,Derived outcome
+denial_probability_true,Hidden probability used only to generate outcomes,Decimal,Generation audit field
