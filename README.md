@@ -120,8 +120,7 @@ Precision	53.97%
 Recall (0.20 threshold)	55.8%
 Best F1 Score	0.432
 ROC-AUC	0.7817
-
-The prediction threshold was optimized from the default 0.50 to 0.20 to improve the identification of potentially denied claims while maintaining reasonable precision.
+Because denied claims represent a smaller proportion of the dataset, accuracy alone does not fully reflect model performance. Greater emphasis was placed on ROC-AUC, precision, recall, and threshold optimization to evaluate how effectively the model identifies claims that may require pre-submission review. The decision threshold was adjusted from the default 0.50 to 0.20 to improve recall while maintaining reasonable precision for a business screening workflow.
 
 🖥 Dashboard Preview
 <img width="1330" height="198" alt="Screenshot 2026-07-21 at 6 09 57 PM" src="https://github.com/user-attachments/assets/26c93867-359d-4215-8c16-e68dd82d957b" />
@@ -165,7 +164,7 @@ healthcare-claim-denial-analytics/
 └── README.md
 
 ⚙ Installation
-git clone https://github.com/yourusername/healthcare-claim-denial-analytics.git
+git clone https://github.com/Simrithichoudhary/healthcare-claim-denial-analytics.git
 
 cd healthcare-claim-denial-analytics
 
@@ -174,19 +173,19 @@ pip install -r requirements.txt
 streamlit run dashboard/app.py
 
 📈 Business Impact
-
-This project demonstrates how predictive analytics can support revenue cycle management by:
-
+This project demonstrates how predictive analytics can support healthcare revenue cycle management by enabling operational teams to:
 Identifying potentially denied claims before submission
 Highlighting operational risk factors
 Supporting proactive claim review
 Reducing reimbursement delays
 Improving claim quality and operational efficiency
+
 ⚠ Limitations
 The project uses a synthetic healthcare claims dataset for demonstration purposes.
 Performance may differ on real-world payer data.
 Logistic Regression was selected for interpretability; more advanced models could improve predictive performance.
 Periodic retraining would be required to adapt to evolving payer rules and coding practices.
+
 🔮 Future Enhancements
 XGBoost and LightGBM model comparison
 SHAP-based feature explanations
@@ -194,17 +193,10 @@ Real-time API deployment
 User authentication
 Claim history tracking
 Cloud deployment (AWS/Azure)
-👤 Author
 
+👤 Author
 Simrithi Choudhary
 MS Business Analytics | Iowa State University
 
-Why this README works
 
-It does more than explain the code—it tells a business story. A recruiter can quickly understand:
-
-the problem you're solving,
-the technologies you used,
-how the machine learning fits into the workflow,
-and the business value of the solution.
 
