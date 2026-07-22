@@ -1,4 +1,8 @@
 🏥 Healthcare Claim Denial Analytics
+![Python](https://img.shields.io/badge/Python-3.12-blue)
+![Streamlit](https://img.shields.io/badge/Streamlit-App-red)
+![Scikit--Learn](https://img.shields.io/badge/Scikit--Learn-ML-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
 An end-to-end Business Analytics solution that combines data engineering, machine learning, and interactive visualization to identify high-risk healthcare claims before submission.
 
@@ -10,12 +14,13 @@ This project demonstrates how predictive analytics can help revenue cycle teams 
 
 The solution combines:
 
-Historical claim analytics
-Interactive business dashboards
-Machine learning-based denial prediction
-Explainable risk factors
-Actionable operational recommendations
-🎯 Business Problem
+- Historical claim analytics
+- Interactive business dashboards
+- Machine learning-based denial prediction
+- Explainable risk factors
+- Actionable operational recommendations
+
+🎯 Business Problems
 
 Insurance claim denials create significant financial and operational challenges for healthcare organizations.
 
@@ -76,6 +81,7 @@ Streamlit Dashboard
           │
           ▼
 Operational Recommendations
+
 🚀 Features
 Executive Dashboard
 Total claims analyzed
@@ -90,16 +96,19 @@ Estimated probability of denial
 Risk categorization
 Key risk factors
 Recommended actions
+
 🛠 Technology Stack
-Category	Technologies
-Language	Python
-Database	SQLite
-Data Processing	Pandas, NumPy
-Visualization	Plotly, Streamlit
-Machine Learning	Scikit-learn
-Model	Logistic Regression
-Preprocessing	ColumnTransformer, OneHotEncoder, StandardScaler
-Model Persistence	Joblib
+| Category | Technologies |
+|----------|--------------|
+| Language | Python |
+| Database | SQLite |
+| Data Processing | Pandas, NumPy |
+| Visualization | Plotly, Streamlit |
+| Machine Learning | Scikit-learn |
+| Model | Logistic Regression |
+| Preprocessing | ColumnTransformer, OneHotEncoder, StandardScaler |
+| Model Persistence | Joblib |
+
 🤖 Machine Learning Pipeline
 
 The prediction model was implemented using a Scikit-learn Pipeline to ensure consistent preprocessing during both training and inference.
@@ -114,12 +123,14 @@ Threshold optimization for business use
 This approach eliminates training-serving inconsistencies and simplifies deployment.
 
 📊 Model Performance
-Metric	Value
-Accuracy	87.7%
-Precision	53.97%
-Recall (0.20 threshold)	55.8%
-Best F1 Score	0.432
-ROC-AUC	0.7817
+| Metric | Value |
+|--------|------:|
+| Accuracy | **87.7%** |
+| Precision | **53.97%** |
+| Recall (0.20 threshold) | **55.8%** |
+| Best F1 Score | **0.432** |
+| ROC-AUC | **0.7817** |
+
 Because denied claims represent a smaller proportion of the dataset, accuracy alone does not fully reflect model performance. Greater emphasis was placed on ROC-AUC, precision, recall, and threshold optimization to evaluate how effectively the model identifies claims that may require pre-submission review. The decision threshold was adjusted from the default 0.50 to 0.20 to improve recall while maintaining reasonable precision for a business screening workflow.
 
 🖥 Dashboard Preview
@@ -174,11 +185,11 @@ streamlit run dashboard/app.py
 
 📈 Business Impact
 This project demonstrates how predictive analytics can support healthcare revenue cycle management by enabling operational teams to:
-Identifying potentially denied claims before submission
-Highlighting operational risk factors
-Supporting proactive claim review
-Reducing reimbursement delays
-Improving claim quality and operational efficiency
+- Identify potentially denied claims before submission
+- Highlight operational risk factors
+- Prioritize claims for manual review
+- Reduce reimbursement delays
+- Improve claim quality and operational efficiency
 
 ⚠ Limitations
 The project uses a synthetic healthcare claims dataset for demonstration purposes.
