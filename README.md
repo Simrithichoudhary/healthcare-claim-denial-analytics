@@ -6,7 +6,7 @@
 
 An end-to-end Business Analytics solution that combines data engineering, machine learning, and interactive visualization to identify high-risk healthcare claims before submission.
 
-📌 Project Overview
+📌 Project Overview:
 
 Healthcare providers lose millions of dollars annually due to denied insurance claims caused by incomplete documentation, coding errors, eligibility issues, and authorization failures.
 
@@ -20,7 +20,7 @@ The solution combines:
 - Explainable risk factors
 - Actionable operational recommendations
 
-🎯 Business Problems
+🎯 Business Problem:
 
 Insurance claim denials create significant financial and operational challenges for healthcare organizations.
 
@@ -35,7 +35,7 @@ Duplicate claims
 
 Traditional review processes rely heavily on manual validation, making it difficult to proactively identify high-risk claims.
 
-💡 Solution
+💡 Solution:
 
 The application provides two complementary capabilities:
 
@@ -57,7 +57,7 @@ Recommended actions
 
 This enables healthcare organizations to intervene before claim submission instead of after denial.
 
-🏗 Solution Architecture
+🏗 Solution Architecture:
 Healthcare Claims Dataset
           │
           ▼
@@ -82,7 +82,7 @@ Streamlit Dashboard
           ▼
 Operational Recommendations
 
-🚀 Features
+🚀 Features:
 Executive Dashboard
 Total claims analyzed
 Historical denial rate
@@ -97,7 +97,7 @@ Risk categorization
 Key risk factors
 Recommended actions
 
-🛠 Technology Stack
+🛠 Technology Stack:
 | Category | Technologies |
 |----------|--------------|
 | Language | Python |
@@ -109,7 +109,7 @@ Recommended actions
 | Preprocessing | ColumnTransformer, OneHotEncoder, StandardScaler |
 | Model Persistence | Joblib |
 
-🤖 Machine Learning Pipeline
+🤖 Machine Learning Pipeline:
 
 The prediction model was implemented using a Scikit-learn Pipeline to ensure consistent preprocessing during both training and inference.
 
@@ -122,7 +122,7 @@ Threshold optimization for business use
 
 This approach eliminates training-serving inconsistencies and simplifies deployment.
 
-📊 Model Performance
+📊 Model Performance:
 | Metric | Value |
 |--------|------:|
 | Accuracy | **87.7%** |
@@ -133,7 +133,7 @@ This approach eliminates training-serving inconsistencies and simplifies deploym
 
 Because denied claims represent a smaller proportion of the dataset, accuracy alone does not fully reflect model performance. Greater emphasis was placed on ROC-AUC, precision, recall, and threshold optimization to evaluate how effectively the model identifies claims that may require pre-submission review. The decision threshold was adjusted from the default 0.50 to 0.20 to improve recall while maintaining reasonable precision for a business screening workflow.
 
-🖥 Dashboard Preview
+🖥 Dashboard Preview:
 <img width="1330" height="198" alt="Screenshot 2026-07-21 at 6 09 57 PM" src="https://github.com/user-attachments/assets/26c93867-359d-4215-8c16-e68dd82d957b" />
 
 Executive Dashboard
@@ -148,7 +148,7 @@ High-Risk Prediction
 Low-Risk Prediction
 <img width="1421" height="649" alt="Screenshot 2026-07-21 at 6 13 41 PM" src="https://github.com/user-attachments/assets/87c80eae-d490-4a68-aa41-c930b5166bbd" />
 
-📂 Project Structure
+📂 Project Structure:
 healthcare-claim-denial-analytics/
 │
 ├── dashboard/
@@ -174,7 +174,7 @@ healthcare-claim-denial-analytics/
 │
 └── README.md
 
-⚙ Installation
+⚙ Installation:
 git clone https://github.com/Simrithichoudhary/healthcare-claim-denial-analytics.git
 
 cd healthcare-claim-denial-analytics
@@ -183,7 +183,7 @@ pip install -r requirements.txt
 
 streamlit run dashboard/app.py
 
-📈 Business Impact
+📈 Business Impact:
 This project demonstrates how predictive analytics can support healthcare revenue cycle management by enabling operational teams to:
 - Identify potentially denied claims before submission
 - Highlight operational risk factors
@@ -191,13 +191,13 @@ This project demonstrates how predictive analytics can support healthcare revenu
 - Reduce reimbursement delays
 - Improve claim quality and operational efficiency
 
-⚠ Limitations
+⚠ Limitations:
 The project uses a synthetic healthcare claims dataset for demonstration purposes.
 Performance may differ on real-world payer data.
 Logistic Regression was selected for interpretability; more advanced models could improve predictive performance.
 Periodic retraining would be required to adapt to evolving payer rules and coding practices.
 
-🔮 Future Enhancements
+🔮 Future Enhancements:
 XGBoost and LightGBM model comparison
 SHAP-based feature explanations
 Real-time API deployment
