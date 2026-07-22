@@ -10,8 +10,8 @@ import streamlit as st
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 
-MODEL_PATH = PROJECT_ROOT / "models" / "claim_denial_model.pkl"
-FEATURE_COLUMNS_PATH = PROJECT_ROOT / "models" / "feature_columns.pkl"
+MODEL_PATH = PROJECT_ROOT / "models" / "claim_denial_pipeline.pkl"
+DECISION_THRESHOLD = 0.20
 
 DATABASE_PATH = PROJECT_ROOT / "data" / "healthcare_claims.db"
 
@@ -20,8 +20,7 @@ sys.path.append(str(PROJECT_ROOT / "src"))
 from recommendation_engine import generate_recommendations
 
 
-model = joblib.load(MODEL_PATH)
-feature_columns = joblib.load(FEATURE_COLUMNS_PATH)
+model_pipeline = joblib.load(MODEL_PATH)
 
 @st.cache_data
 def load_claims_data():
@@ -48,30 +47,22 @@ st.set_page_config(
 
 st.markdown(
     """
-    <div style="
-        padding: 1.4rem 1.6rem;
-        border-radius: 14px;
-        background: linear-gradient(90deg, #0f172a 0%, #1e3a5f 100%);
-        margin-bottom: 1.5rem;
-    ">
-        <h1 style="
-            color: white;
-            margin: 0;
-            font-size: 2.2rem;
-        ">
-            🏥 Healthcare Claim Denial Analytics
-        </h1>
-
-        <p style="
-            color: #dbeafe;
-            margin-top: 0.5rem;
-            margin-bottom: 0;
-            font-size: 1rem;
-        ">
-            Historical denial insights, financial impact analysis, and
-            pre-submission claim risk prediction.
-        </p>
-    </div>
+<div style="padding: 2rem 2rem; border-radius: 14px;
+background: linear-gradient(90deg, #0f172a 0%, #1e3a5f 100%);
+margin-bottom: 1.5rem;">
+<h1 style="color: white; margin: 0; font-size: 2.2rem;">
+🏥 Healthcare Claim Denial Analytics
+</h1>
+<p style="
+color:#E2E8F0;
+font-size:1.15rem;
+margin-top:0.7rem;
+margin-bottom:0;
+font-weight:400;
+">
+Historical denial insights, financial impact analysis, and pre-submission claim risk prediction.
+</p>
+</div>
     """,
     unsafe_allow_html=True
 )
@@ -197,6 +188,13 @@ with chart_col2:
 
 st.divider()
 
+st.markdown("## Claim Risk Prediction")
+
+st.caption(
+    "Enter claim details to estimate the probability of claim denial "
+    "before submission."
+)
+
 col1, col2 = st.columns(2)
 
 with col1:
@@ -289,7 +287,7 @@ with col2:
         ["No", "Yes"]
     )
 
-if st.button("Predict Denial Risk"):
+if st.button("Analyze Claim Risk"):
 
     claim_input = pd.DataFrame([{
         "payer_name": payer_name,
@@ -308,36 +306,120 @@ if st.button("Predict Denial Risk"):
         "days_to_submit": days_to_submit
     }])
 
-    encoded_input = pd.get_dummies(claim_input)
+    # The saved pipeline performs encoding and scaling automatically.
+    denial_probability = model_pipeline.predict_proba(
+        claim_input
+    )[0, 1]
 
-    encoded_input = encoded_input.reindex(
-        columns=feature_columns,
-        fill_value=0
+    denial_prediction = int(
+        denial_probability >= DECISION_THRESHOLD
     )
-
-    denial_probability = model.predict_proba(encoded_input)[0, 1]
-    denial_prediction = model.predict(encoded_input)[0]
-    st.write("Raw denial probability:", denial_probability)
-
 
     st.divider()
-    st.subheader("Prediction Result")
 
-    st.metric(
-        label="Predicted Denial Risk",
-        value=f"{denial_probability * 100:.1f}%"
-    )
+    st.markdown("## Pre-Submission Claim Risk Assessment")
+
+    with st.container(border=True):
+
+         st.caption(
+             "This assessment estimates the probability of claim denial based on "
+             "clinical, operational, and payer-related factors."
+        )
+         st.metric(
+            label="Estimated Probability of Denial",
+            value=f"{denial_probability * 100:.1f}%"
+        )
+         st.caption("Denial Risk Level")
+         st.progress(float(denial_probability))
+    if denial_probability < 0.10:
+        st.success(
+            "🟢 **LOW RISK**\n\n"
+            "This claim appears suitable for standard submission."
+        )
+
+    elif denial_probability < 0.30:
+        st.warning(
+            "🟡 **MODERATE RISK**\n\n"
+            "Review the claim carefully before submission."
+        )
+
+    else:
+        st.error(
+            "🔴 **HIGH RISK**\n\n"
+            "Review and resolve the identified issues before submitting "
+            "the claim to reduce the likelihood of denial."
+        )
 
     if denial_prediction == 1:
-        st.error("⚠️ High-Risk Claim: Review before submission.")
+        st.info(
+        "This claim exceeds the validated review threshold and "
+        "should be reviewed before submission."
+    )
     else:
-        st.success("✅ Low-Risk Claim: Proceed with standard review.")
+        st.info(
+        "This claim falls below the review threshold and appears "
+        "suitable for the standard submission workflow."
+    )
 
-    st.subheader("Recommended Actions")
+    st.markdown("### Key Risk Factors Identified")
+
+    risk_factors = []
+
+    if (
+        claim_input.iloc[0]["prior_auth_required"] == 1
+        and claim_input.iloc[0]["prior_auth_on_file"] == 0
+    ):
+        risk_factors.append(
+            "Prior authorization is required but is not on file."
+        )
+
+    if claim_input.iloc[0]["documentation_complete"] == 0:
+        risk_factors.append(
+            "Required claim documentation is incomplete."
+        )
+
+    if claim_input.iloc[0]["eligibility_verified"] == 0:
+        risk_factors.append(
+            "Patient insurance eligibility has not been verified."
+        )
+
+    if claim_input.iloc[0]["provider_credentialed"] == 0:
+        risk_factors.append(
+            "Provider credentialing has not been confirmed."
+        )
+
+    if claim_input.iloc[0]["coding_valid"] == 0:
+        risk_factors.append(
+            "CPT or ICD-10 coding validation failed."
+        )
+
+    if claim_input.iloc[0]["duplicate_indicator"] == 1:
+        risk_factors.append(
+            "The claim may be a duplicate submission."
+        )
+
+    if claim_input.iloc[0]["days_to_submit"] > 30:
+        risk_factors.append(
+            "The claim has a long submission delay."
+        )
+
+    if risk_factors:
+        for factor in risk_factors:
+            st.write(f"• {factor}")
+    else:
+        st.write("• No major operational risk factors identified.")
+
+    st.markdown("### Recommended Actions")
 
     recommendations = generate_recommendations(
         claim_input.iloc[0]
     )
 
-    for recommendation in recommendations:
-        st.write(f"• {recommendation}")
+    if recommendations:
+        for recommendation in recommendations:
+            st.write(f"• {recommendation}")
+    else:
+        st.write(
+        "• No significant operational risks were identified. "
+        "Proceed with the standard validation and submission workflow."
+    )
