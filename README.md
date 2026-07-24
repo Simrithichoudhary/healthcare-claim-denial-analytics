@@ -8,7 +8,9 @@ An end-to-end Business Analytics solution that combines data engineering, machin
 
 ## 🚀 Live Demo
 
-Deployment in progress. The application can be run locally by following the installation instructions below.
+Explore the interactive dashboard here:
+
+**https://healthcare-claim-denial-analytics.streamlit.app**
 
 📌 Project Overview:
 
