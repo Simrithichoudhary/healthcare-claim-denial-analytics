@@ -6,6 +6,10 @@
 
 An end-to-end Business Analytics solution that combines data engineering, machine learning, and interactive visualization to identify high-risk healthcare claims before submission.
 
+## 🚀 Live Demo
+
+Deployment in progress. The application can be run locally by following the installation instructions below.
+
 📌 Project Overview:
 
 Healthcare providers lose millions of dollars annually due to denied insurance claims caused by incomplete documentation, coding errors, eligibility issues, and authorization failures.
@@ -19,6 +23,18 @@ The solution combines:
 - Machine learning-based denial prediction
 - Explainable risk factors
 - Actionable operational recommendations
+
+## ⭐ Repository Highlights
+
+- End-to-end Business Analytics project
+- Synthetic healthcare claims dataset (10,000+ claims)
+- SQLite data warehouse
+- Interactive Streamlit dashboard
+- Plotly executive visualizations
+- Machine Learning prediction pipeline
+- Logistic Regression with threshold optimization
+- Explainable operational risk factors
+- Business-focused recommendations
 
 🎯 Business Problem:
 
@@ -97,6 +113,19 @@ Risk categorization
 Key risk factors
 Recommended actions
 
+## 💼 Business Analytics Skills Demonstrated
+
+- Business Problem Framing
+- Revenue Cycle Analytics
+- Data Cleaning & Feature Engineering
+- SQL Database Design
+- Exploratory Data Analysis (EDA)
+- Predictive Analytics
+- Machine Learning
+- Dashboard Development
+- Business Storytelling
+- Operational Decision Support
+
 🛠 Technology Stack:
 | Category | Technologies |
 |----------|--------------|
@@ -133,6 +162,16 @@ This approach eliminates training-serving inconsistencies and simplifies deploym
 
 Because denied claims represent a smaller proportion of the dataset, accuracy alone does not fully reflect model performance. Greater emphasis was placed on ROC-AUC, precision, recall, and threshold optimization to evaluate how effectively the model identifies claims that may require pre-submission review. The decision threshold was adjusted from the default 0.50 to 0.20 to improve recall while maintaining reasonable precision for a business screening workflow.
 
+## 📌 Business Questions Answered
+
+This project helps healthcare organizations answer questions such as:
+
+- Which payers generate the highest denial rates?
+- Which denial reasons create the greatest revenue leakage?
+- Which workflow stages contribute most to claim denials?
+- Which claims require manual review before submission?
+- What operational actions reduce denial risk?
+
 ## 🖥 Dashboard Preview
 
 ### Executive Overview
@@ -164,6 +203,18 @@ Users can evaluate an individual claim before submission. The application predic
 ![Recommendations](screenshots/recommendations.png)
 
 Based on detected risks, the system generates actionable recommendations to reduce denial likelihood before claim submission, supporting proactive revenue cycle management.
+
+## 📂 Repository Organization
+
+| Folder | Purpose |
+|---------|----------|
+| dashboard | Streamlit application |
+| data | Synthetic dataset and SQLite database |
+| models | Trained machine learning model |
+| notebooks | EDA, feature engineering and modeling |
+| src | Data generation and business logic |
+| screenshots | Dashboard screenshots used in README |
+
 📂 Project Structure:
 healthcare-claim-denial-analytics/
 │
@@ -199,13 +250,17 @@ pip install -r requirements.txt
 
 streamlit run dashboard/app.py
 
-📈 Business Impact:
-This project demonstrates how predictive analytics can support healthcare revenue cycle management by enabling operational teams to:
-- Identify potentially denied claims before submission
-- Highlight operational risk factors
-- Prioritize claims for manual review
-- Reduce reimbursement delays
-- Improve claim quality and operational efficiency
+## 📈 Business Value
+
+This solution demonstrates how predictive analytics can support healthcare revenue cycle management by enabling organizations to:
+
+- Identify high-risk claims before submission
+- Reduce preventable insurance claim denials
+- Prioritize claims requiring manual review
+- Improve reimbursement turnaround times
+- Minimize revenue leakage through proactive intervention
+- Support data-driven decision-making with interactive dashboards
+- Enhance operational efficiency across the revenue cycle
 
 ⚠ Limitations:
 The project uses a synthetic healthcare claims dataset for demonstration purposes.
@@ -213,17 +268,27 @@ Performance may differ on real-world payer data.
 Logistic Regression was selected for interpretability; more advanced models could improve predictive performance.
 Periodic retraining would be required to adapt to evolving payer rules and coding practices.
 
-🔮 Future Enhancements:
-XGBoost and LightGBM model comparison
-SHAP-based feature explanations
-Real-time API deployment
-User authentication
-Claim history tracking
-Cloud deployment (AWS/Azure)
+## 🗺️ Project Roadmap
 
-👤 Author
-Simrithi Choudhary
-MS Business Analytics | Iowa State University
+Future improvements that could enhance the solution include:
 
+- Compare Logistic Regression with XGBoost and LightGBM models
+- Integrate SHAP for model explainability and feature importance visualization
+- Deploy the application on Streamlit Community Cloud or Azure App Service
+- Develop REST APIs for real-time claim scoring
+- Add user authentication and role-based access control
+- Support historical claim tracking and trend monitoring
+- Integrate with real-world healthcare claims datasets for production use
 
+## 📬 Contact
+
+**Simrithi Choudhary**
+
+MS in Business Analytics  
+Iowa State University
+
+- GitHub: https://github.com/Simrithichoudhary
+- LinkedIn: https://www.linkedin.com/in/simrithi-choudhary-b0b2011a4/
+
+If you have feedback, suggestions, or would like to discuss healthcare analytics, business analytics, or data science opportunities, feel free to connect with me on LinkedIn.
 
