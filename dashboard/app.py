@@ -79,6 +79,28 @@ denied_claims = int(claims["was_denied"].sum())
 denial_rate = denied_claims / total_claims * 100
 revenue_leakage = claims["revenue_leakage"].sum()
 
+denied_only = claims[claims["was_denied"] == 1]
+
+soft_denials = int(
+    (denied_only["denial_type"] == "Soft").sum()
+)
+
+hard_denials = int(
+    (denied_only["denial_type"] == "Hard").sum()
+)
+
+soft_denial_rate = (
+    soft_denials / denied_claims * 100
+    if denied_claims > 0
+    else 0
+)
+
+hard_denial_rate = (
+    hard_denials / denied_claims * 100
+    if denied_claims > 0
+    else 0
+)
+
 kpi1, kpi2, kpi3, kpi4 = st.columns(4)
 
 with kpi1:
@@ -108,6 +130,25 @@ with kpi4:
         value=f"${revenue_leakage / 1_000_000:.2f}M",
         help="Total billed amount associated with denied claims."
     )
+st.markdown("### Denial Recoverability")
+
+denial_kpi1, denial_kpi2 = st.columns(2)
+
+with denial_kpi1:
+    st.metric(
+        label="🔄 Soft Denials",
+        value=f"{soft_denials:,}",
+        delta=f"{soft_denial_rate:.1f}% of denied claims",
+        help="Potentially correctable denials that may be fixed and resubmitted."
+    )
+
+with denial_kpi2:
+    st.metric(
+        label="⛔ Hard Denials",
+        value=f"{hard_denials:,}",
+        delta=f"{hard_denial_rate:.1f}% of denied claims",
+        help="Denials that are generally non-recoverable or require major intervention."
+    )    
 
 st.divider()
 st.markdown("## Historical Performance")
@@ -186,6 +227,93 @@ with chart_col2:
         use_container_width=True
     )
 
+# ==========================================================
+# Revenue Cycle Intelligence
+# ==========================================================
+
+st.markdown("## Revenue Cycle Intelligence")
+
+st.caption(
+    "Healthcare-specific insights showing denial patterns by "
+    "standardized CARC codes and revenue cycle workflow stages."
+)
+
+carc_analysis = (
+    denied_only
+    .dropna(subset=["carc_code"])
+    .groupby(["carc_code", "denial_reason"])
+    .agg(
+        denied_claims=("claim_id", "count"),
+        revenue_leakage=("revenue_leakage", "sum")
+    )
+    .reset_index()
+    .sort_values("denied_claims", ascending=False)
+)
+
+workflow_analysis = (
+    denied_only
+    .groupby("workflow_stage")
+    .agg(
+        denied_claims=("claim_id", "count"),
+        revenue_leakage=("revenue_leakage", "sum")
+    )
+    .reset_index()
+    .sort_values("denied_claims", ascending=False)
+)
+
+rcm_col1, rcm_col2 = st.columns(2)
+
+with rcm_col1:
+
+    carc_chart = px.bar(
+        carc_analysis.sort_values(
+            "denied_claims",
+            ascending=True
+        ),
+        x="denied_claims",
+        y="carc_code",
+        orientation="h",
+        color="revenue_leakage",
+        title="Denied Claims by CARC Code",
+        labels={
+            "denied_claims": "Denied Claims",
+            "carc_code": "CARC Code",
+            "revenue_leakage": "Revenue Leakage"
+        },
+        hover_data={
+            "denial_reason": True,
+            "revenue_leakage": ":$,.2f"
+        }
+    )
+
+    carc_chart.update_layout(
+        yaxis={"categoryorder": "total ascending"}
+    )
+
+    st.plotly_chart(
+        carc_chart,
+        use_container_width=True
+    )
+
+with rcm_col2:
+
+    workflow_chart = px.bar(
+        workflow_analysis,
+        x="denied_claims",
+        y="workflow_stage",
+        orientation="h",
+        color="revenue_leakage",
+        title="Denials by Revenue Cycle Stage"
+    )
+
+    workflow_chart.update_layout(
+        yaxis=dict(categoryorder="total ascending")
+    )
+
+    st.plotly_chart(
+        workflow_chart,
+        use_container_width=True
+    )
 st.divider()
 
 st.markdown("## Claim Risk Prediction")
@@ -320,17 +448,19 @@ if st.button("Analyze Claim Risk"):
     st.markdown("## Pre-Submission Claim Risk Assessment")
 
     with st.container(border=True):
-
-         st.caption(
-             "This assessment estimates the probability of claim denial based on "
-             "clinical, operational, and payer-related factors."
+        st.caption(
+            "This assessment estimates the probability of claim denial based on "
+            "clinical, operational, and payer-related factors."
         )
-         st.metric(
+
+        st.metric(
             label="Estimated Probability of Denial",
             value=f"{denial_probability * 100:.1f}%"
         )
-         st.caption("Denial Risk Level")
-         st.progress(float(denial_probability))
+
+        st.caption("Denial Risk Level")
+        st.progress(float(denial_probability))
+
     if denial_probability < 0.10:
         st.success(
             "🟢 **LOW RISK**\n\n"
@@ -352,14 +482,70 @@ if st.button("Analyze Claim Risk"):
 
     if denial_prediction == 1:
         st.info(
-        "This claim exceeds the validated review threshold and "
-        "should be reviewed before submission."
-    )
+            "This claim exceeds the validated review threshold and "
+            "should be reviewed before submission."
+        )
     else:
         st.info(
-        "This claim falls below the review threshold and appears "
-        "suitable for the standard submission workflow."
-    )
+            "This claim falls below the review threshold and appears "
+            "suitable for the standard submission workflow."
+        )
+
+    if denial_prediction == 1:
+        expected_reason = "Unknown"
+
+        if (
+            claim_input.iloc[0]["prior_auth_required"] == 1
+            and claim_input.iloc[0]["prior_auth_on_file"] == 0
+        ):
+            expected_reason = "Prior Authorization Missing"
+
+        elif claim_input.iloc[0]["documentation_complete"] == 0:
+            expected_reason = "Documentation Incomplete"
+
+        elif claim_input.iloc[0]["eligibility_verified"] == 0:
+            expected_reason = "Eligibility Issue"
+
+        elif claim_input.iloc[0]["coding_valid"] == 0:
+            expected_reason = "Coding Error"
+
+        elif claim_input.iloc[0]["duplicate_indicator"] == 1:
+            expected_reason = "Duplicate Claim"
+
+        elif claim_input.iloc[0]["provider_credentialed"] == 0:
+            expected_reason = "Provider Credentialing"
+
+        elif claim_input.iloc[0]["days_to_submit"] > 30:
+            expected_reason = "Timely Filing"
+
+        mapping = denied_only[
+            denied_only["denial_reason"] == expected_reason
+        ]
+
+        if not mapping.empty:
+            carc = mapping["carc_code"].mode().iloc[0]
+            denial_type = mapping["denial_type"].mode().iloc[0]
+            workflow = mapping["workflow_stage"].mode().iloc[0]
+
+            st.markdown("### Expected Denial Profile")
+
+            st.caption(
+                "The application estimates the most likely denial profile "
+                "if this claim is denied."
+            )
+
+            left, profile_col1, profile_col2, profile_col3, right = st.columns(
+                [0.4, 1, 1, 1, 0.4]
+            )
+
+            with profile_col1:
+                st.metric("Expected CARC Code", carc)
+
+            with profile_col2:
+                st.metric("Denial Type", denial_type)
+
+            with profile_col3:
+                st.metric("Workflow Stage", workflow)
 
     st.markdown("### Key Risk Factors Identified")
 
@@ -405,7 +591,7 @@ if st.button("Analyze Claim Risk"):
 
     if risk_factors:
         for factor in risk_factors:
-            st.write(f"• {factor}")
+            st.warning(factor, icon="⚠️")
     else:
         st.write("• No major operational risk factors identified.")
 
@@ -417,9 +603,9 @@ if st.button("Analyze Claim Risk"):
 
     if recommendations:
         for recommendation in recommendations:
-            st.write(f"• {recommendation}")
+            st.success(recommendation, icon="✅")
     else:
         st.write(
-        "• No significant operational risks were identified. "
-        "Proceed with the standard validation and submission workflow."
-    )
+            "• No significant operational risks were identified. "
+            "Proceed with the standard validation and submission workflow."
+        )

@@ -167,8 +167,54 @@ def generate_claims(n_claims: int = 10000, seed: int = 42) -> pd.DataFrame:
             denial_reasons.append("Medical Necessity / Other")
 
     df["denial_reason"] = denial_reasons
-    df["claim_status"] = np.where(df["was_denied"] == 1, "Denied", "Approved")
 
+    carc_mapping = {
+    "Not Denied": None,
+    "Prior Authorization Missing": "CO-197",
+    "Eligibility Issue": "CO-27",
+    "Documentation Incomplete": "CO-16",
+    "Coding Error": "CO-4",
+    "Duplicate Claim": "CO-18",
+    "Timely Filing": "CO-29",
+    "Provider Credentialing": "CO-170",
+    "Medical Necessity / Other": "CO-50"
+    }
+
+    df["carc_code"] = df["denial_reason"].map(carc_mapping)
+    soft_denials = {
+    "Prior Authorization Missing",
+    "Eligibility Issue",
+    "Documentation Incomplete",
+    "Coding Error",
+    "Duplicate Claim",
+    "Timely Filing",
+    "Provider Credentialing"
+    }
+
+    df["denial_type"] = np.where(
+        df["denial_reason"] == "Not Denied",
+        "Not Applicable",
+    np.where(
+        df["denial_reason"].isin(soft_denials),
+        "Soft",
+        "Hard"
+    )
+    )
+    workflow_mapping = {
+    "Not Denied": "Claim Approved",
+    "Eligibility Issue": "Registration & Eligibility",
+    "Prior Authorization Missing": "Authorization",
+    "Documentation Incomplete": "Clinical Documentation",
+    "Coding Error": "Medical Coding",
+    "Duplicate Claim": "Billing",
+    "Timely Filing": "Billing",
+    "Provider Credentialing": "Provider Enrollment",
+    "Medical Necessity / Other": "Clinical Review"
+    }
+
+    df["workflow_stage"] = df["denial_reason"].map(workflow_mapping)
+
+    df["claim_status"] = np.where(df["was_denied"] == 1, "Denied", "Approved")
     # Payment behavior: approved claims can still be underpaid.
     allowed_ratio = np.clip(rng.normal(0.83, 0.08, n_claims), 0.55, 1.0)
     underpayment_factor = np.where(rng.random(n_claims) < 0.16, rng.uniform(0.70, 0.93, n_claims), 1.0)
@@ -186,9 +232,10 @@ def generate_claims(n_claims: int = 10000, seed: int = 42) -> pd.DataFrame:
         "claim_amount", "prior_auth_required", "prior_auth_on_file",
         "documentation_complete", "eligibility_verified", "provider_credentialed",
         "coding_valid", "duplicate_indicator", "days_to_submit",
-        "claim_status", "was_denied", "denial_reason",
+        "claim_status", "was_denied", "denial_reason", "carc_code",
+        "denial_type","workflow_stage",
         "amount_paid", "revenue_leakage", "denial_probability_true"
-    ]
+    ]    
     return df[columns]
 
 
