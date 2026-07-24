@@ -133,21 +133,37 @@ This approach eliminates training-serving inconsistencies and simplifies deploym
 
 Because denied claims represent a smaller proportion of the dataset, accuracy alone does not fully reflect model performance. Greater emphasis was placed on ROC-AUC, precision, recall, and threshold optimization to evaluate how effectively the model identifies claims that may require pre-submission review. The decision threshold was adjusted from the default 0.50 to 0.20 to improve recall while maintaining reasonable precision for a business screening workflow.
 
-🖥 Dashboard Preview:
-<img width="1330" height="198" alt="Screenshot 2026-07-21 at 6 09 57 PM" src="https://github.com/user-attachments/assets/26c93867-359d-4215-8c16-e68dd82d957b" />
+## 🖥 Dashboard Preview
 
-Executive Dashboard
-<img width="1192" height="199" alt="Screenshot 2026-07-21 at 6 10 21 PM" src="https://github.com/user-attachments/assets/4889aaa9-b0b5-4dc6-bd5a-4e8faaf70ecf" />
+### Executive Overview
 
-Historical Analytics
-<img width="1416" height="548" alt="Screenshot 2026-07-21 at 6 11 22 PM" src="https://github.com/user-attachments/assets/ffc44a1e-ac33-4def-9445-89d3d808a6de" />
+![Executive Overview](screenshots/executive-overview.png)
 
-High-Risk Prediction
-<img width="1406" height="723" alt="Screenshot 2026-07-21 at 6 13 06 PM" src="https://github.com/user-attachments/assets/e3749a44-eb0b-4b09-9711-0b14311baa65" />
+The Executive Overview summarizes overall claim volume, denial rate, revenue at risk, and denial recoverability metrics, providing stakeholders with a high-level operational snapshot.
 
-Low-Risk Prediction
-<img width="1421" height="649" alt="Screenshot 2026-07-21 at 6 13 41 PM" src="https://github.com/user-attachments/assets/87c80eae-d490-4a68-aa41-c930b5166bbd" />
+---
 
+### Revenue Cycle Intelligence
+
+![Revenue Cycle Intelligence](screenshots/revenue-cycle-intelligence.png)
+
+Interactive visualizations highlight denial trends across CARC codes and revenue cycle workflow stages, helping identify operational bottlenecks responsible for claim denials.
+
+---
+
+### Claim Risk Prediction
+
+![Claim Risk Prediction](screenshots/claim-risk-prediction.png)
+
+Users can evaluate an individual claim before submission. The application predicts denial probability, estimates the expected denial profile, and highlights operational risk factors requiring attention.
+
+---
+
+### Recommended Actions
+
+![Recommendations](screenshots/recommendations.png)
+
+Based on detected risks, the system generates actionable recommendations to reduce denial likelihood before claim submission, supporting proactive revenue cycle management.
 📂 Project Structure:
 healthcare-claim-denial-analytics/
 │
